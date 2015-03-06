@@ -4,28 +4,44 @@
     <meta charset="UTF-8">
     <title>Spinster Demo</title>
     <script src="node_modules/jquery/dist/jquery.js"></script>
+    <link href="node_modules/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
+    <link href="src/animate.css" rel="stylesheet" media="all">
     <link href="src/spinster.css" rel="stylesheet" media="all">
     <script src="src/spinster.js"></script>
 </head>
 <body>
-<div class="sandbox">
+<div class="sandbox container">
+
+    <div class="container">
+
+        <button class="animated shake" id="#test">Test</button>
+    </div>
+
+
     <div class="spinster" id="spinster">
-        <section class="spinster-keyframe active" id="one">
+        <section class="spinster-item active" id="one">
             <h1>Section 1</h1>
-            <a href="#two">next</a>
+            <p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts. Separated they live in Bookmarksgrove right at the coast of the Semantics, a large.</p>
+            <a href="#two" class="spinster-target">next</a>
         </section>
-        <section class="spinster-keyframe" id="two">
-            <h1>Section 1</h1>
-            <a href="#three">next</a>
+        <section class="spinster-item" id="two">
+
+            <h1>Section 2</h1>
+            <p>A wonderful serenity has taken possession of my entire soul, like these sweet mornings of spring which I enjoy with my whole heart. I am alone, and feel the charm of existence in this spot, which was.</p>
+            <a href="#three" class="spinster-target">next</a>
         </section>
-        <section class="spinster-keyframe" id="three">
-            <h1>Section 1</h1>
-            <a href="#four">next</a>
+        <section class="spinster-item" id="three">
+            <h1>Section 3</h1>
+            <p>One morning, when Gregor Samsa woke from troubled dreams, he found himself transformed in his bed into a horrible vermin. He lay on his armour-like back, and if he lifted his head a little he could se</p>
+            <a href="#four" class="spinster-target">next</a>
         </section>
-        <section class="spinster-keyframe" id="four">
-            <h1>Section 1</h1>
+        <section class="spinster-item" id="four">
+            <h1>Section 4</h1>
+            <p>The European languages are members of the same family. Their separate existence is a myth. For science, music, sport, etc, Europe uses the same vocabulary. The languages only differ in their grammar.</p>
         </section>
     </div>
+
+
 </div>
 
 <script>

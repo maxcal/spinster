@@ -3,8 +3,12 @@
 describe('Spinster', function(){
 
     before(function(){
-       this.fixture = $(window.__html__['spec/fixtures/spinster.html']);
+
+       $('body').append(window.__html__['spec/fixtures/spinster.html']);
+
+       this.fixture = $('.spinster');
        this.spinster = new Spinster(this.fixture);
+       this.element = this.spinster.getElement();
     });
 
     it('has a test suite', function(){
@@ -20,18 +24,13 @@ describe('Spinster', function(){
     describe('go', function(){
         it("activates target section", function(){
             this.spinster.go("#two");
-            return expect(this.spinster.getElement().find('#two').hasClass('active')).to.be.true;
+            return expect(this.element.find('#two').hasClass('active')).to.be.true;
         });
 
         it("deactivates the old frame", function(){
             this.spinster.go("#two");
-            return expect(this.spinster.getElement().find('.active').length).to.equal(1);
+            return expect(this.element.find('.active').length).to.equal(1);
 
         });
-    });
-
-    it("listens for hashChange events", function(){
-        window.location.hash = 'four';
-        return expect(this.spinster.getElement().find('.active').attr('id')).to.equal('four');
     });
 });
