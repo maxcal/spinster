@@ -17,12 +17,8 @@
     "karma-fixture": "^0.2.2",
     "karma-html2js-preprocessor": "^0.1.0",
     "karma-mocha": "^0.1.10",
-    "karma-phantomjs-launcher": "^0.1.4",
-    "karma-requirejs": "^0.2.2",
     "karma-spec-reporter": "0.0.16",
-    "mocha": "^2.1.0",
-    "requirejs": "^2.1.16",
-    "qunitjs": "*"
+    "mocha": "^2.1.0"
   },
   "dependencies": {
     "bootstrap": "^3.3.2"

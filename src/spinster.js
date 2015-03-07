@@ -111,6 +111,14 @@
             } else {
                 target = element.find(self.options.items).first();
             }
+
+            // Browsers without CSS3 transitions don't get a animation - waaaah waah
+            if (!Modernizr.csstransitions) {
+                element.find(self.options.items).removeClass('active');
+                target.addClass('active');
+                return self;
+            }
+
             element.find(self.options.items).removeClass('slideInLeft slideOutLeft slideOutRight slideInRight animated');
             element.queue('hashchanges', function(next){
                 var ct = target; // next animation in cue will change outer target variable.
@@ -120,6 +128,8 @@
             });
 
             element.dequeue( "hashchanges" );
+
+            return self;
         };
 
         init(this.options);

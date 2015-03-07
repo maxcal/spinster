@@ -1,0 +1,27 @@
+{
+  "name": "spinster",
+  "version": "0.0.1",
+  "homepage": "https://github.com/maxcal/spinster",
+  "authors": [
+    "Max Calabrese <max.calabrese@ymail.com>"
+  ],
+  "description": "A stateful carousel",
+  "main": "src/spinster.js",
+  "keywords": [
+    "carousel",
+    "bootstrap"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.1.3",
+    "modernizr": "~2.8.3",
+    "bootstrap": "~3.3.2"
+  }
+}
