@@ -21,16 +21,7 @@ describe('Spinster', function(){
         });
     });
 
-    describe('go', function(){
-        it("activates target section", function(){
-            this.spinster.go("#two");
-            return expect(this.element.find('#two').hasClass('active')).to.be.true;
-        });
+    describe('slide', function(){
 
-        it("deactivates the old frame", function(){
-            this.spinster.go("#two");
-            return expect(this.element.find('.active').length).to.equal(1);
-
-        });
     });
 });

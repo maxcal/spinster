@@ -1,17 +1,14 @@
 'use strict';
 (function(context){
-
     function Spinster(element, options){
-
         var self = this;
         var element = element || $('</div>');
-
-
         /**
          *
          * @type {{container: string, items: string, keys: {LEFT: number, RIGHT: number}}}
          */
         this.options = {
+            animation: 'fade',
             container: '.spinster-container',
             items: '.spinster-item',
             keys: {
@@ -19,7 +16,6 @@
                 RIGHT: 39
             }
         };
-
         /**
          * Merges passed in options with defaults
          * @param options
@@ -43,25 +39,14 @@
                 element.find(window.location.hash).addClass('active').siblings().removeClass('active');
             }
 
+            element.queue('hashchanges', []);
+
             // Prevent the browsers default behavior of scrolling to target
             element.on('click','.spinster-target', function(e){
                 e.preventDefault();
                 window.location.hash = $(this).attr('href').replace('#', '');
             });
-
         }
-
-        /**
-         * @param target string|jQuery
-         */
-        this.go = function(target, animate){
-            target = target.jquery? target : element.find(target);
-
-
-            self.slide(target).done(function(){
-                // do this when we are finished animating.
-            });
-        };
 
         /**
          *
@@ -83,7 +68,6 @@
             // Which direction are we going?
             direction = target.index() < old.index() ? 'back' : 'forward';
 
-
             switch (direction) {
                 case 'back':
                     fadeInClass = 'slideInLeft';
@@ -94,15 +78,12 @@
                     fadeOutClass = 'slideOutLeft';
                     break;
             }
-
             target.addClass('animated').addClass(fadeInClass);
             old.addClass('animated').addClass(fadeOutClass);
-
             target.one(animationEnd, function(){
                 $(this).addClass('active');
-                newItemAnimationFinshed.resolve();
+                newItemAnimationFinshed.resolveWith({ target: target  });
             });
-
             old.one(animationEnd, function(){
                 oldItemAnimationFinished.resolve();
             });
@@ -112,7 +93,7 @@
                items.removeClass('slideInLeft slideOutLeft slideOutRight slideInRight animated');
             });
 
-            return animating;
+            return newItemAnimationFinshed;
         }
 
         /**
@@ -122,17 +103,23 @@
             return element;
         };
 
-
         this.onHashChange = function(){
-
             var id = window.location.hash;
+            var target;
+            if (id.length) {
+                target = element.find(id);
+            } else {
+                target = element.find(self.options.items).first();
+            }
+            element.find(self.options.items).removeClass('slideInLeft slideOutLeft slideOutRight slideInRight animated');
+            element.queue('hashchanges', function(next){
+                var ct = target; // next animation in cue will change outer target variable.
+                self.slide(ct).done(function(){
+                    next();
+                });
+            });
 
-            if (!id.length) {
-                id = element.find(self.options.items).first();
-            }
-            if (element.find(id).length) {
-                self.go(id);
-            }
+            element.dequeue( "hashchanges" );
         };
 
         init(this.options);
