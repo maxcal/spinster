@@ -33,7 +33,10 @@
             // Fill in the default
             self.config(options);
 
-            window.addEventListener("hashchange", self.onHashChange, false);
+            window.addEventListener("hashchange", function(e){
+                e.preventDefault();
+                self.onHashChange();
+            }, false);
 
             if (window.location.hash) {
                 element.find(window.location.hash).addClass('active').siblings().removeClass('active');
@@ -47,7 +50,6 @@
                 window.location.hash = $(this).attr('href').replace('#', '');
             });
         }
-
         /**
          *
          * @param target
@@ -57,16 +59,14 @@
 
             var old = element.find('.active'),
                 animationEnd = 'webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend',
-                direction,
+                // Which direction are we going?
+                direction = target.index() < old.index() ? 'back' : 'forward',
                 fadeInClass,
                 fadeOutClass,
                 items = element.find(self.options.items),
-                newItemAnimationFinshed = $.Deferred(),
-                oldItemAnimationFinished = $.Deferred(),
-                animating = $.when(newItemAnimationFinshed, oldItemAnimationFinished);
-
-            // Which direction are we going?
-            direction = target.index() < old.index() ? 'back' : 'forward';
+                targetAnim = $.Deferred(),
+                oldAnim = $.Deferred(),
+                animating = $.when(targetAnim, oldAnim);
 
             switch (direction) {
                 case 'back':
@@ -78,22 +78,25 @@
                     fadeOutClass = 'slideOutLeft';
                     break;
             }
+
             target.addClass('animated').addClass(fadeInClass);
-            old.addClass('animated').addClass(fadeOutClass);
+            old.addClass('animated').addClass(fadeOutClass);           
+            
             target.one(animationEnd, function(){
                 $(this).addClass('active');
-                newItemAnimationFinshed.resolveWith({ target: target  });
+                targetAnim.resolve();
             });
             old.one(animationEnd, function(){
-                oldItemAnimationFinished.resolve();
+                $(this).removeClass('active');
+                oldAnim.resolve();
             });
 
             animating.done(function(){
-               target.siblings().removeClass('active');
                items.removeClass('slideInLeft slideOutLeft slideOutRight slideInRight animated');
+
             });
 
-            return newItemAnimationFinshed;
+            return animating;
         }
 
         /**
@@ -112,11 +115,9 @@
                 target = element.find(self.options.items).first();
             }
 
-            // Browsers without CSS3 transitions don't get a animation - waaaah waah
+            // Browsers without CSS3 transitions get a jQuery animation
             if (!Modernizr.csstransitions) {
-                element.find(self.options.items).removeClass('active');
-                target.addClass('active');
-                return self;
+                return fallbackAnimate(target, element.find(self.options.items).filter('.active'));
             }
 
             element.find(self.options.items).removeClass('slideInLeft slideOutLeft slideOutRight slideInRight animated');
@@ -128,10 +129,22 @@
             });
 
             element.dequeue( "hashchanges" );
-
             return self;
         };
 
+        /**
+         * A fall back for browsers which do not support CSS3 transitions.
+         * At the moment this does not animate at all.
+         * @param $target
+         * @param $old
+         * @returns {*}
+         */
+        function fallbackAnimate($target, $old) {
+            $target.addClass('active');
+            $old.removeClass('active');
+        }
+
+        // Initialize with the passed in options
         init(this.options);
     }
 

@@ -9,15 +9,40 @@
     <script src="bower_components/modernizr/modernizr.js"></script>
     <script src="src/spinster.js"></script>
 </head>
-<body>
-    <div class="sandbox container">
-        <!-- load the fixture with ajax. -->
+<body class="spinster-demo">
+    <header class="container">
+        <h1>Spinster</h1>
+        <button id="toggle-transitions" class="btn">Toggle CSS3 transitions</button>
+    </header>
+
+    <div class="container-fluid" id="test">
+        <div class="sandbox container" id="sandbox">
+            <!-- load the fixture with ajax. -->
+
+
+        </div>
     </div>
+
     <script>
         jQuery(function(){
-            $('.sandbox').load('spec/fixtures/spinster.html', function(){
+            $('#sandbox').load('spec/fixtures/spinster.html', function(){
                 var spinster = new Spinster($('#spinster'));
             });
+
+            $('#toggle-transitions').click(function(){
+               var state;
+               $('html').toggleClass('csstransitions');
+               $('html').toggleClass('no-csstransitions');
+
+                state = $('html').hasClass('csstransitions');
+
+
+                $(this).toggleClass('off');
+                console.log('turning csstransitions:', state ? 'on' : 'off'  );
+
+               Modernizr.csstransitions = state;
+            });
+
         });
     </script>
 </body>
