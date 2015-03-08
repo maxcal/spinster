@@ -1,4 +1,3 @@
-'use strict';
 (function(context){
     function Spinster(element, options){
         var self = this;
@@ -16,6 +15,39 @@
                 RIGHT: 39
             }
         };
+
+        $(window).on('keyup', function(e){
+            switch(e.keyCode){
+                case 37: // left
+                    self.previous();
+                    break;
+                case 39: // right
+                    self.next();
+                    break;
+            }
+        });
+
+
+        this.next = function(){
+            var target = element.find('.active').next();
+            if (target.length) pushState('#' + target.attr('id'));
+        };
+        this.previous = function(){
+            var target = element.find('.active').prev();
+            if (target.length) pushState('#' + target.attr('id'));
+        };
+
+        function pushState(href){
+            // Avoid scrolling to hash target
+            if (window.history && window.history.pushState) {
+                // Most browsers ignore the second title parameter - silly W3C
+                window.history.pushState({ 'foo': 'bar' }, "", href);
+                self.onHashChange();
+            } else /** fallback **/ {
+                window.location.hash = href;
+            }
+        }
+
         /**
          * Merges passed in options with defaults
          * @param options
@@ -33,22 +65,31 @@
             // Fill in the default
             self.config(options);
 
-            window.addEventListener("hashchange", function(e){
-                e.preventDefault();
-                self.onHashChange();
-            }, false);
-
+            // If there is a hash we try to match it to a element and activate that element.
             if (window.location.hash) {
-                element.find(window.location.hash).addClass('active').siblings().removeClass('active');
+                // nothing happens if jQuery does not find element.
+                element.find(window.location.hash)
+                        .addClass('active')
+                        .siblings()
+                            .removeClass('active');
             }
 
+            // this a custom "animation cue"
             element.queue('hashchanges', []);
 
             // Prevent the browsers default behavior of scrolling to target
             element.on('click','.spinster-target', function(e){
                 e.preventDefault();
-                window.location.hash = $(this).attr('href').replace('#', '');
+                e.stopPropagation();
+                pushState($(this).attr('href'));
             });
+
+            // Bind an event listener for when user goes back and forward
+            // Also for click events from browsers that do not support history.pushState
+            window.addEventListener("hashchange", function(e){
+                e.preventDefault();
+                self.onHashChange();
+            }, false);
         }
         /**
          *
@@ -79,9 +120,10 @@
                     break;
             }
 
+            // Starts the animation
             target.addClass('animated').addClass(fadeInClass);
-            old.addClass('animated').addClass(fadeOutClass);           
-            
+            old.addClass('animated').addClass(fadeOutClass);
+
             target.one(animationEnd, function(){
                 $(this).addClass('active');
                 targetAnim.resolve();
