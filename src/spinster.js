@@ -27,14 +27,15 @@
             }
         });
 
-
         this.next = function(){
             var target = element.find('.active').next();
             if (target.length) pushState('#' + target.attr('id'));
+            element.trigger('spinster.next', [target]);
         };
         this.previous = function(){
             var target = element.find('.active').prev();
             if (target.length) pushState('#' + target.attr('id'));
+            element.trigger('spinster.previous', [target]);
         };
 
         function pushState(href){
@@ -54,11 +55,6 @@
          */
         this.config = function(options){
             this.options = $.extend(this.options, options || {});
-        }
-
-        function isAnimating(){
-            var items =  element.find(self.options.items).filter('animating');
-            return items.length !== 0;
         }
 
         function init(options){
@@ -120,6 +116,8 @@
                     break;
             }
 
+            element.trigger('spinster.animation_start', [target]);
+
             // Starts the animation
             target.addClass('animated').addClass(fadeInClass);
             old.addClass('animated').addClass(fadeOutClass);
@@ -138,6 +136,10 @@
 
             });
 
+            animating.done(function(){
+                element.trigger('spinster.animation_end', [target]);
+            });
+
             return animating;
         }
 
@@ -151,6 +153,9 @@
         this.onHashChange = function(){
             var id = window.location.hash;
             var target;
+            var promise;
+            var old = element.find(self.options.items).filter('.active');
+
             if (id.length) {
                 target = element.find(id);
             } else {
@@ -159,18 +164,25 @@
 
             // Browsers without CSS3 transitions get a jQuery animation
             if (!Modernizr.csstransitions) {
-                return fallbackAnimate(target, element.find(self.options.items).filter('.active'));
+                element.trigger('spinster.animation_start', [target]);
+                promise = fallbackAnimate(target, old);
+                promise.done(function(){
+                    element.trigger('spinster.animation_end', [target]);
+                });
+                return promise;
             }
 
             element.find(self.options.items).removeClass('slideInLeft slideOutLeft slideOutRight slideInRight animated');
             element.queue('hashchanges', function(next){
                 var ct = target; // next animation in cue will change outer target variable.
-                self.slide(ct).done(function(){
+                promise = self.slide(ct).done(function(){
                     next();
                 });
             });
 
             element.dequeue( "hashchanges" );
+            element.trigger('spinster.onHashChange', [target, promise]);
+
             return self;
         };
 
@@ -182,9 +194,24 @@
          * @returns {*}
          */
         function fallbackAnimate($target, $old) {
+            var promise = $.Deferred();
             $target.addClass('active');
             $old.removeClass('active');
+            promise.resolve();
+            return promise;
+
         }
+
+        element.on('spinster.animation_start', function(e, target){
+            element.css('minHeight', target.height() + 20);
+            $('html,body').animate({
+                scrollTop: target.offset().top - 70
+            }, 1000);
+        });
+
+        $(window).resize(_.throttle(function(){
+            element.css('minHeight', element.find('.active').height());
+        }, 20));
 
         // Initialize with the passed in options
         init(this.options);
