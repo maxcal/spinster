@@ -1,4 +1,4 @@
-(function(context){
+(define(['underscore', 'jquery'], function(_, $){
     function Spinster(element, options){
         var self = this;
         var element = element || $('</div>');
@@ -65,9 +65,9 @@
             if (window.location.hash) {
                 // nothing happens if jQuery does not find element.
                 element.find(window.location.hash)
-                        .addClass('active')
-                        .siblings()
-                            .removeClass('active');
+                    .addClass('active')
+                    .siblings()
+                    .removeClass('active');
             }
 
             // this a custom "animation cue"
@@ -96,7 +96,7 @@
 
             var old = element.find('.active'),
                 animationEnd = 'webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend',
-                // Which direction are we going?
+            // Which direction are we going?
                 direction = target.index() < old.index() ? 'back' : 'forward',
                 fadeInClass,
                 fadeOutClass,
@@ -132,7 +132,7 @@
             });
 
             animating.done(function(){
-               items.removeClass('slideInLeft slideOutLeft slideOutRight slideInRight animated');
+                items.removeClass('slideInLeft slideOutLeft slideOutRight slideInRight animated');
 
             });
 
@@ -163,7 +163,7 @@
             }
 
             // Browsers without CSS3 transitions get a jQuery animation
-            if (!Modernizr.csstransitions) {
+            if ($('html').hasClass('csstransitions')) {
                 element.trigger('spinster.animation_start', [target]);
                 promise = fallbackAnimate(target, old);
                 promise.done(function(){
@@ -171,7 +171,6 @@
                 });
                 return promise;
             }
-
             element.find(self.options.items).removeClass('slideInLeft slideOutLeft slideOutRight slideInRight animated');
             element.queue('hashchanges', function(next){
                 var ct = target; // next animation in cue will change outer target variable.
@@ -179,7 +178,6 @@
                     next();
                 });
             });
-
             element.dequeue( "hashchanges" );
             element.trigger('spinster.onHashChange', [target, promise]);
 
@@ -217,8 +215,5 @@
         init(this.options);
     }
 
-    context.Spinster = Spinster;
-}(window));
-
-
-
+    return Spinster;
+}));
