@@ -163,7 +163,7 @@
             }
 
             // Browsers without CSS3 transitions get a jQuery animation
-            if ($('html').hasClass('csstransitions')) {
+            if (!$('html').hasClass('csstransitions')) {
                 element.trigger('spinster.animation_start', [target]);
                 promise = fallbackAnimate(target, old);
                 promise.done(function(){
