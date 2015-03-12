@@ -1,6 +1,6 @@
 {
   "name": "spinster",
-  "version": "0.0.1",
+  "version": "2.0.0",
   "homepage": "https://github.com/maxcal/spinster",
   "authors": [
     "Max Calabrese <max.calabrese@ymail.com>"
@@ -24,6 +24,8 @@
     "modernizr": "~2.8.3",
     "bootstrap": "~3.3.2",
     "underscore": "~1.8.2",
-    "requirejs": "~2.1.16"
+    "requirejs": "~2.1.16",
+    "mocha": "~2.2.1",
+    "chai": "~2.1.1"
   }
 }
