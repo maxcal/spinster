@@ -1,0 +1,16 @@
+.spinster-demo .spinster-item {
+    background-color: rgba(215, 40, 40, 0.2);
+    padding: 0.7em;
+}
+
+header {
+    margin-bottom: 1em;
+}
+
+.spinster-demo .spinster {
+    background-color: rgba(16, 181, 44, 0.2);
+}
+
+.spinster-demo {
+    min-height: 3000px;
+}
