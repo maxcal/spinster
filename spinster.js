@@ -22,7 +22,10 @@ define(['jquery', 'underscore'], function($, _){
             initialize: 'Spinster.initialize',
             setActive: 'Spinster.setActive',
             change: 'Spinster.change',
-            resize: 'Spinster.resize',
+            resize: {
+                start: 'Spinster.resize.start',
+                end: 'Spinster.resize.end',
+            },
             scroll: 'Spinster.scroll',
             transition: {
                 start: 'Spinster.transition.start',
@@ -57,7 +60,7 @@ define(['jquery', 'underscore'], function($, _){
             $el.trigger(events.setActive, [$target, $old]);
             $old.removeClass('active');
             $target.addClass('active');
-            $el.trigger(events.resize, [$target]);
+            $el.trigger(events.resize.start, [$target]);
             return self;
         };
         /**
@@ -92,7 +95,7 @@ define(['jquery', 'underscore'], function($, _){
                 def.resolve($target);
                 $el.trigger(events.transition.end, [$target, $old, direction]);
                 // trigger resize
-                $el.trigger(events.resize, [$target]);
+                $el.trigger(events.resize.start, [$target]);
 
             });
             return def;
@@ -194,9 +197,14 @@ define(['jquery', 'underscore'], function($, _){
          * Bind event handlers
          */
         (function(){
-            $el.on(events.resize, function(e, $target){
+            $el.on(events.resize.start, function(e, $target){
                 $target = $target || self.getActive();
-                $el.css('min-height', $target.outerHeight());
+
+                $el.animate({
+                    minHeight: $target.outerHeight()
+                }, 200, function(){
+                    $el.trigger(events.resize.end);
+                });
             });
 
             $el.on(events.scroll, function(e, $target){
@@ -207,7 +215,7 @@ define(['jquery', 'underscore'], function($, _){
             });
 
             $(window).resize(_.throttle(function(){
-                self.$el.trigger(events.resize, [self.getActive()]);
+                self.$el.trigger(events.resize.start, [self.getActive()]);
             }, 20));
 
             $el.on('click', '.spinster-target', function(e){

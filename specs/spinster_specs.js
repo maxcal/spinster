@@ -58,9 +58,13 @@ define(['spinster'], function(Spinster){
                 this.subject.setActive($('#two'));
                 expect(this.subject.getActive().attr('id')).to.eq('two');
             });
-            it('triggers a resize', function(){
+            it('triggers a resize', function(done){
+                var $el = this.subject.$el;
                 this.subject.setActive($('#two'));
-                expect(this.subject.$el.height()).to.be.at.least(this.subject.getActive().height());
+                this.subject.$el.on(events.resize.end, function(){
+                    expect($el.height()).to.be.at.least($el.find('.active').height());
+                    done();
+                });
             });
         });
 
@@ -79,13 +83,6 @@ define(['spinster'], function(Spinster){
                     expect(t.hasClass('active')).to.be.true;
                     done();
                 });
-            });
-
-            it('triggers a resize', function(done){
-                this.subject.change($('#two')).done(function(val){
-                    done();
-                });
-                expect(this.subject.$el.height()).to.be.at.least(this.subject.getActive().height());
             });
         });
 
@@ -128,16 +125,19 @@ define(['spinster'], function(Spinster){
 
         describe('events', function(){
 
-            it("reacts to window resize", function(done){
+            xit("reacts to window resize", function(done){
                 var events = this.subject.events;
                 var $el = this.subject.$el;
 
                 this.subject.setActive($('#four'));
-                this.subject.$el.on(events.resize, function(e, target){
-                    expect($el.height())
-                        .to.be.at.least(target.height());
+
+
+                this.subject.$el.on(events.resize.end, function(){
+                    expect($el.height()).to.be.at.least($el.find('.active').height());
                     done();
                 });
+
+
                 this.subject.init();
                 $(window).trigger('resize');
             });
