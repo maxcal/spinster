@@ -6,7 +6,7 @@ require.config({
     }
 });
 
-require(['jquery', 'spinster'], function($, Spinster){
+require(['jquery', '../spinster'], function($, Spinster){
     jQuery(function(){
         new Spinster($('#spinster'));
         $('#toggle-transitions').click(function(){
